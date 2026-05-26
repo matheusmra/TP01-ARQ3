@@ -1,0 +1,59 @@
+# ==========================
+# Simulação e Síntese
+# ==========================
+
+# Diretórios de saída de simuladores
+work/
+xsim.dir/
+*.jou
+*.log
+*.pb
+*.wdb
+*.vcd
+*.vpd
+*.fsdb
+*.shm/
+transcript
+modelsim.ini
+vsim.wlf
+
+# Verilator
+obj_dir/
+
+# Arquivos compilados
+*.o
+*.a
+*.so
+*.exe
+
+# ==========================
+# Waveforms
+# ==========================
+*.vcd
+*.fst
+*.gtkw
+
+# ==========================
+# IDE e SO
+# ==========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+Thumbs.db
+.DS_Store
+
+# ==========================
+# Vivado / Quartus
+# ==========================
+*.xpr
+*.bit
+*.mcs
+*.ltx
+.Xil/
+*.qpf
+*.qsf
+db/
+incremental_db/
+output_files/
