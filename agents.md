@@ -22,9 +22,9 @@ Ao receber um prompt e gerar uma resposta, o agente **deve obrigatoriamente** at
 
 > [Prompt recebido — melhorar a redação se necessário, mantendo o sentido original]
 
-### Resposta (resumo)
+### Resposta
 
-[Resumo claro e objetivo das ações realizadas e dos resultados produzidos]
+[Resposta completa e na íntegra, tal como foi gerada pelo agente]
 
 ---
 ```
@@ -33,7 +33,7 @@ Ao receber um prompt e gerar uma resposta, o agente **deve obrigatoriamente** at
 
 1. **Numerar sequencialmente** — O número do prompt (`N`) deve seguir a sequência do último prompt registrado no arquivo.
 2. **Incluir o prompt recebido** — Transcrever o prompt do usuário, podendo melhorar a redação para maior clareza, sem alterar o sentido.
-3. **Resumir a resposta** — Documentar de forma objetiva o que foi feito, quais arquivos foram criados/modificados e quais decisões foram tomadas.
+3. **Incluir a resposta na íntegra** — Documentar a resposta completa gerada pelo agente, sem omitir partes relevantes.
 4. **Não omitir interações** — Toda interação que resulte em alteração de código, criação de arquivos ou decisão de projeto deve ser registrada. Interações triviais (como "ok", "aprovado", "prossiga") que não geram conteúdo novo podem ser omitidas.
 5. **Atualizar antes de encerrar** — O registro deve ser feito na mesma sessão em que o prompt foi processado, antes de concluir a resposta ao usuário.
 
