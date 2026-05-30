@@ -79,7 +79,68 @@ module tb_cache_top();
         cpu_read = 1'b0;
     endtask
 
+    task test_read_path();
+        logic [31:0] read_val;
+        logic hit_status;
+        $display("\n--- 7.1: TESTES DE LEITURA (READ PATH) ---");
+        
+        // Inicializa a cache garantindo estado vazio
+        reset = 1; #20; reset = 0; #10;
 
+        // 1. Cache Miss (Leitura)
+        // Endereço 8'hC0 vai para o Índice 0. A memória principal pre-carrega este com 0x12345678.
+        read_cache(8'hC0, read_val, hit_status);
+        check_assert("Miss Inicial: Leitura de endereco nao cacheado da MISS", hit_status == 0);
+        check_assert("Miss Inicial: Dado retornado da memoria principal esta correto", read_val == 32'h12345678);
+
+        // 2. Verificação dos Bits de Controle
+        // Acessamos os arrays internos do controlador de cache para confirmar a FSM
+        check_assert("Controle: Bit VALID foi setado na cache apos o MISS", (dut.ctrl.valid_array[0][0] == 1'b1) || (dut.ctrl.valid_array[0][1] == 1'b1));
+        check_assert("Controle: TAG armazenada corresponde ao endereco (0xC)", (dut.ctrl.tag_array[0][0] == 4'hC) || (dut.ctrl.tag_array[0][1] == 4'hC));
+
+        // 3. Cache Hit (Leitura)
+        // Lemos o mesmíssimo endereço imediatamente a seguir
+        read_cache(8'hC0, read_val, hit_status);
+        check_assert("Hit: Segunda leitura ao mesmo endereco resulta em HIT", hit_status == 1);
+        check_assert("Hit: Dado retornado no HIT manteve-se correto", read_val == 32'h12345678);
+    endtask
+    
+    task test_write_path();
+        logic [31:0] read_val;
+        logic hit_status;
+        $display("\n--- 7.2: TESTES DE ESCRITA (WRITE PATH) ---");
+        
+        reset = 1; #20; reset = 0; #10;
+
+        // 1. Write Miss e Política de Write-Allocate
+        // Escrevemos num endereço não cacheado (8'hD0 -> Índice 0, Tag 0xD)
+        write_cache(8'hD0, 32'hDEADBEEF, hit_status);
+        check_assert("Write Miss: Escrita inicial resulta em MISS (Write-Allocate funcionou)", hit_status == 0);
+        check_assert("Controle: Bit DIRTY foi setado na cache", (dut.ctrl.dirty_array[0][0] == 1'b1) || (dut.ctrl.dirty_array[0][1] == 1'b1));
+
+        // 2. Write Hit e Sequências de Escrita
+        // Substituímos o valor no mesmo bloco já cacheado
+        write_cache(8'hD0, 32'hB00B1E55, hit_status);
+        check_assert("Write Hit: Segunda escrita no mesmo endereco resulta em HIT", hit_status == 1);
+
+        // Confirmação (Leitura após a sequência de escritas)
+        read_cache(8'hD0, read_val, hit_status);
+        check_assert("Sequencia: Leitura apos multiplas escritas retorna o ultimo dado (HIT)", read_val == 32'hB00B1E55 && hit_status == 1);
+
+        // 3. Validação da Política de Write-Back
+        // O bloco 8'hD0 está "sujo". Lemos outros dois endereços que mapeiam para o mesmo índice (0x00 e 0x40)
+        // Isso forçará a FSM a executar a substituição LRU e escrever o bloco sujo na memória principal.
+        read_cache(8'h00, read_val, hit_status); // Preenche a Via 1
+        read_cache(8'h40, read_val, hit_status); // Provoca conflito e expulsa o 0xD0 (Write-Back)
+        
+        // Resetamos a cache completamente. O próximo acesso ao 0xD0 terá de ir buscar o valor na memória principal.
+        reset = 1; #20; reset = 0; #10;
+        
+        read_cache(8'hD0, read_val, hit_status);
+        // O valor tem de ser B00B1E55 e tem de ser um MISS (pois a cache foi resetada).
+        check_assert("Write-Back: Bloco dirty atualizou a memoria principal ANTES de ser substituido", read_val == 32'hB00B1E55 && hit_status == 0);
+    endtask
+    
     // Casos de teste: 
     task test_edge_cases();
         logic [31:0] read_val;
@@ -163,6 +224,8 @@ module tb_cache_top();
         #10;
         
         // Roda as tarefas
+        test_read_path();
+        test_write_path();
         test_edge_cases();
         test_consistency();
         test_replacement();
