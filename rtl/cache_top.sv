@@ -1,17 +1,3 @@
-// =============================================================================
-// cache_top.sv — Módulo Top-Level de Integração
-// Issue #10 — TP01 ARQ3
-//
-// Este módulo é a "cozinha completa" vista de fora:
-//   - Instancia o cache_controller (a bancada do chef)
-//   - Instancia a main_memory (a despensa)
-//   - Conecta os barramentos internos entre os dois
-//   - Expõe para fora apenas a interface da CPU (para os testbenches)
-//
-// Quem usa este módulo não precisa saber que existem dois componentes
-// internos — só enxerga a interface da CPU.
-// =============================================================================
-
 module cache_top #(
     parameter int MEM_LATENCY = 5  // Repassado para a main_memory
 ) (
