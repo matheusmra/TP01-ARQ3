@@ -204,3 +204,60 @@ A IA implementou o módulo `rtl/cache_controller.sv` com as seguintes caracterí
 - **Reset assíncrono:** Invalida toda a cache e zera registradores
 
 ---
+
+## Prompt 8 — Estruturação e Automação do Testbench Integrado
+
+**Objetivo:** Consolidar os cenários de teste (Seções 7.3, 7.4 e 7.5) em um único ambiente de verificação (`tb_cache_top.sv`) e implementar uma rotina automatizada para contagem de acertos/erros e geração de evidências visuais.
+
+### Prompt
+
+> Decisão de centralizar todos os testes em um único arquivo (tb_cache_top.sv).
+> Organização e isolamento de cada cenário utilizando tasks do SystemVerilog.
+> Como implementar um mecanismo elegante para automatizar os logs de PASS/FAIL (incluindo a contabilização de acertos e erros totais)?
+
+### Resposta
+
+A IA validou a estratégia do grupo de modularizar os cenários através de `tasks` e sugeriu a seguinte infraestrutura complementar de verificação:
+
+- **Sistema de Asserção Customizado:** Recomendou a criação de uma task auxiliar chamada `check_assert`. Essa função recebe o nome do teste e a condição lógica esperada, imprimindo `[PASS]` ou `[FAIL]` diretamente no terminal, além de incrementar variaveis globais (`tests_passed` e `tests_failed`) para exibir um resumo final da execução.
+- **Sincronismo de Sinais:** Lembrou a necessidade de incluir comandos de espera (`wait(cpu_ready == 1'b1)`) dentro das tasks de estímulo (`read_cache` e `write_cache`), garantindo que o testbench respeite os ciclos de latência da memória definidos na nossa FSM.
+- **Geração de Waveforms:** Indicou o uso das diretivas nativas `$dumpfile("tb_cache_waveforms.vcd")` e `$dumpvars(0, tb_cache_top)` no bloco `initial`, o que força o simulador a registrar as transições de todos os barramentos automaticamente, facilitando a extração dos gráficos solicitados pelo enunciado.
+
+---
+
+## Prompt 9 — Validação da Estratégia de Teste para LRU e Write-Back
+
+**Objetivo:** Validar a sequência lógica de estímulos para forçar a substituição (eviction) e o write-back em uma arquitetura associativa de 2 vias.
+
+### Prompt
+
+> Criação de ambiente único com logs automáticos de PASS/FAIL e exportação de waveforms (.vcd).
+> Confirmação da sequência de estímulos criada pelo grupo para forçar o LRU e o write-back na cache de 2 vias.
+
+### Resposta
+
+A IA confirmou que a estratégia arquitetada pelo grupo está correta e descreveu o fluxo resultante na FSM:
+- **Ocupação do Set:** Os endereços 0x00 e 0x10 mapeiam para o mesmo índice. A leitura preenche as duas vias.
+- **Manipulação do LRU:** Escrever em 0x00 torna o bloco modificado (dirty). A leitura subsequente em 0x10 força a FSM a atualizar o estado do LRU, tornando a via 0 (que contém 0x00) a menos recentemente usada.
+- **Write-Back Forçado:** Ao solicitar 0x20 (que também mapeia para o mesmo índice), ocorre um conflito. O controlador avalia o LRU e seleciona a via 0 para ejeção. Como o bloco está sujo, a FSM transita obrigatoriamente para os estados WRITE_BACK_REQ e WRITE_BACK_WAIT, garantindo que o dado chegue na memória principal antes do novo carregamento.
+
+---
+
+## Prompt 11 — Refatoração e Padronização dos Comentários do Testbench
+
+**Objetivo:** Aplicar metodologias de Clean Code na documentação interna do testbench (tb_cache_top.sv), garantindo que os comentários expliquem a intenção dos testes e a estratégia arquitetural adotada.
+
+### Prompt
+
+> Testbench unificado pronto, mas os comentários literais poluem o código.
+> Criar separações visuais claras para os diferentes blocos lógicos.
+> Substituir traduções de sintaxe por explicações da estratégia de teste (ex: LRU).
+
+### Resposta
+
+A IA refatorou a documentação interna do código aplicando quatro princípios fundamentais:
+- **Documentação Guiada por Intenção:** Removeu comentários que apenas traduziam o código (ex: "Lê o endereço X") e os substituiu por explicações estratégicas, documentando a lógica de engenharia por trás da ação (ex: // Lê a Via 1 para que a Via 0 vire a candidata a ser expulsa (LRU)).
+- **Logs como Documentação:** Ajustou os textos de asserção da função check_assert para que o próprio log gerado no terminal sirva como um relatório descritivo autossuficiente (ex: "Conflito: Carregou 3a tag com sucesso (MISS)").
+
+---
+
