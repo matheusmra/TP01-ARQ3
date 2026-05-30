@@ -15,10 +15,7 @@ module cache_top #(
     output logic        cache_hit
 );
 
-    // -------------------------------------------------------------------------
-    // Fios internos: o corredor entre a bancada e a despensa
-    // Estes sinais são invisíveis para quem usa o cache_top
-    // -------------------------------------------------------------------------
+
     logic        mem_read;
     logic        mem_write;
     logic [7:0]  mem_addr;
@@ -26,9 +23,7 @@ module cache_top #(
     logic [31:0] mem_rdata;
     logic        mem_ready;
 
-    // -------------------------------------------------------------------------
-    // A bancada do chef: cache_controller
-    // -------------------------------------------------------------------------
+
     cache_controller ctrl (
         .clk        (clk),
         .reset      (reset),
@@ -42,7 +37,6 @@ module cache_top #(
         .cpu_ready  (cpu_ready),
         .cache_hit  (cache_hit),
 
-        // Lado da memória (corredor interno)
         .mem_read   (mem_read),
         .mem_write  (mem_write),
         .mem_addr   (mem_addr),
@@ -51,16 +45,14 @@ module cache_top #(
         .mem_ready  (mem_ready)
     );
 
-    // -------------------------------------------------------------------------
-    // A despensa: main_memory
-    // -------------------------------------------------------------------------
+
     main_memory #(
         .LATENCY    (MEM_LATENCY)
     ) mem (
         .clk        (clk),
         .reset      (reset),
 
-        // Corredor interno (vindo do controlador)
+
         .mem_read   (mem_read),
         .mem_write  (mem_write),
         .mem_addr   (mem_addr),
