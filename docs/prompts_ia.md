@@ -260,4 +260,37 @@ A IA refatorou a documentação interna do código aplicando quatro princípios 
 - **Logs como Documentação:** Ajustou os textos de asserção da função check_assert para que o próprio log gerado no terminal sirva como um relatório descritivo autossuficiente (ex: "Conflito: Carregou 3a tag com sucesso (MISS)").
 
 ---
+## Prompt 12 — Implementação e Unificação do Testbench de Validação Completa
 
+**Objetivo:** Construir um ambiente de testes unificado em SystemVerilog (`tb_cache_top.sv`) capaz de validar as seções de 7.1 a 7.5 do enunciado utilizando referências hierárquicas e uma macro de asserção automatizada.
+
+### Prompt
+
+> Com base no controlador de cache parametrizado com 4 conjuntos e 2 vias e na especificação de testes (itens 7.1 a 7.5 do trabalho), implemente um arquivo de testbench unificado chamado `tb_cache_top.sv`. 
+> O testbench deve conter tasks sequenciais separadas para testar o Read Path, Write Path, Casos Limite, Consistência e Substituição por LRU. 
+> Utilize uma função interna chamada `check_assert(string name, logic condition)` para acumular e exibir logs automáticos de [PASS] ou [FAIL] no terminal sem depender de análise visual direta do arquivo VCD. 
+> Para testar os bits internos de controle (valid e dirty) e as tags sem expor novas portas no topo, utilize referências hierárquicas apontando diretamente para as matrizes do controlador (ex: `dut.ctrl.valid_array`).
+
+### Resposta
+
+A IA forneceu a estrutura completa do arquivo de teste em SystemVerilog, implementando:
+1. O gerador de clock simétrico através de um bloco `always #5 clk = ~clk;`.
+2. As rotinas lógicas estruturadas em tasks (`write_cache` e `read_cache`) responsáveis por manipular as flags da CPU e aguardar a subida estável do sinal de sincronismo `cpu_ready`.
+3. Os 5 métodos sequenciais isolados contendo asserções lógicas que cobrem desde o comportamento básico de *miss/hit* até a validação profunda do algoritmo de *Write-Back* e controle de substituição LRU.
+
+---
+
+## Prompt 13 — Refatoração Semântica e Engenharia de Comentários do Testbench
+
+**Objetivo:** Eliminar redundâncias e comentários puramente literais do código do testbench, aplicando técnicas de Clean Code voltadas à legibilidade da intenção arquitetural.
+
+### Prompt
+
+> O testbench unificado está funcional e passando em todos os critérios, mas os comentários internos estão muito focados em traduzir a sintaxe (ex: "Seta o endereço para 0xC0"). 
+> Refatore os comentários de dentro das tasks de teste para focar exclusivamente na intenção da engenharia de teste. Substitua as descrições de comandos por explicações de por que aquela sequência de endereços está sendo injetada (ex: explicar como a sequência de leituras manipula o bit de LRU e força o conflito que gera o Write-Back).
+
+### Resposta
+
+A IA higienizou o arquivo substituindo os comentários redundantes por documentações orientadas à intenção do projeto. As modificações incluíram:
+- Detalhamento semântico nas tasks de substituição, explicando de forma teórica como a lotação das duas vias do Índice 0 seguida de uma escrita transforma a Via 0 em um bloco "sujo" (dirty) e candidato preferencial à expulsão.
+- Padronização das strings de exibição do comando `check_assert`, permitindo que o log impresso em tempo de execução no console funcione como uma especificação viva e legível do correto comportamento do hardware.
