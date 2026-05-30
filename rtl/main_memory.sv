@@ -1,14 +1,3 @@
-// =============================================================================
-// main_memory.sv — Modelo Simplificado de Memória Principal
-// Issue #4 — TP01 ARQ3
-//
-// Funciona como a "despensa" do sistema:
-//   - Guarda 256 palavras de 32 bits (endereços 0x00 a 0xFF)
-//   - Simula latência real: o ajudante conta LATENCY ciclos antes de responder
-//   - Sinaliza conclusão com um pulso de 1 ciclo em mem_ready (handshake)
-//   - Vem pré-carregada com dados de teste conhecidos
-// =============================================================================
-
 module main_memory #(
     parameter int LATENCY = 5  // Número de ciclos para simular tempo de acesso
 ) (
