@@ -219,6 +219,39 @@ A IA implementou o módulo `rtl/cache_controller.sv` com as seguintes caracterí
 
 A IA validou a estratégia do grupo de modularizar os cenários através de `tasks` e sugeriu a seguinte infraestrutura complementar de verificação:
 
+- `task` para cada cenário de teste, com mensagens `PASS`/`FAIL`
+- contadores globais de erros e acertos
+- relatório final exibido no final da simulação
+- uso de `initial` block único para orquestrar todos os testes
+
+---
+
+## Prompt 9 — Criar scripts de automação para compilação e simulação
+
+**Objetivo:** Adicionar automação Linux para compilação, execução, limpeza e visualização de waves do projeto SystemVerilog.
+
+### Prompt
+
+> Crie `sim/Makefile` e `sim/run_sim.sh` com suporte a:
+> - `make compile`, `make run`, `make run_all`, `make clean`, `make waves`
+> - variável `SIM` para escolher o simulador (`iverilog`, `xsim`, etc.)
+> - variável `BUILD_DIR` para o diretório de saída
+> - argumentos `--testbench`, `--waves`, `--clean` no script shell
+> - mensagens de log claras e validação de dependências em Linux
+
+### Resposta
+
+Foram criados:
+
+- `sim/Makefile` com targets:
+  - `compile`: compila todos os módulos RTL e testbenches
+  - `run`: executa a simulação principal via `iverilog`
+  - `run_all`: executa todos os testbenches sequencialmente
+  - `clean`: remove artefatos do diretório de build
+  - `waves`: abre o arquivo VCD em GTKWave
+- `sim/run_sim.sh`: script auxiliar que valida dependências, aceita `--testbench`, `--waves`, `--run-all`, `--clean`, `--sim`, `--outdir` e chama o Makefile apropriado.
+- `README.md` atualizado com instruções de compilação e simulação Linux.
+
 - **Sistema de Asserção Customizado:** Recomendou a criação de uma task auxiliar chamada `check_assert`. Essa função recebe o nome do teste e a condição lógica esperada, imprimindo `[PASS]` ou `[FAIL]` diretamente no terminal, além de incrementar variaveis globais (`tests_passed` e `tests_failed`) para exibir um resumo final da execução.
 - **Sincronismo de Sinais:** Lembrou a necessidade de incluir comandos de espera (`wait(cpu_ready == 1'b1)`) dentro das tasks de estímulo (`read_cache` e `write_cache`), garantindo que o testbench respeite os ciclos de latência da memória definidos na nossa FSM.
 - **Geração de Waveforms:** Indicou o uso das diretivas nativas `$dumpfile("tb_cache_waveforms.vcd")` e `$dumpvars(0, tb_cache_top)` no bloco `initial`, o que força o simulador a registrar as transições de todos os barramentos automaticamente, facilitando a extração dos gráficos solicitados pelo enunciado.

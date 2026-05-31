@@ -15,12 +15,10 @@ Implementação de um **controlador de cache** em SystemVerilog, baseado na Seç
 
 ## Especificações da Cache
 
-> **TODO**: Preencher após definição das decisões de projeto.
-
-- **Tipo**: *a definir*
-- **Política de escrita**: *a definir (write-back / write-through)*
-- **Política de alocação**: *a definir (write-allocate / no-write-allocate)*
-- **Política de substituição**: *a definir (LRU / FIFO / outra)*
+- **Tipo**: Associativa por Conjuntos (Set-Associative) — 4 conjuntos, 2 vias
+- **Política de escrita**: Write-Back
+- **Política de alocação**: Write-Allocate
+- **Política de substituição**: LRU (Least Recently Used)
 
 ## Dependências
 
@@ -33,17 +31,45 @@ Implementação de um **controlador de cache** em SystemVerilog, baseado na Seç
 
 ## Como Compilar e Simular (Linux)
 
-> **TODO**: Instruções detalhadas serão adicionadas após a configuração dos scripts de simulação.
+Dependências mínimas:
+- GNU Make
+- Verilog simulator compatível com `iverilog` ou `xsim`
+- GTKWave (opcional, para abrir waveforms)
+
+No Linux, use os scripts em `sim/`:
 
 ```bash
 # Clone o repositório
 git clone https://github.com/matheusmra/TP01-ARQ3.git
 cd TP01-ARQ3
 
-# Execute a simulação
+# Compilar todos os módulos RTL e testbenches
 cd sim
+make compile
+
+# Executar a simulação principal
 make run
+
+# Executar todos os testbenches sequencialmente
+make run_all
+
+# Limpar os artefatos gerados
+make clean
 ```
+
+Também é possível usar o script auxiliar:
+
+```bash
+./run_sim.sh --testbench tb_cache_controller
+./run_sim.sh --run-all
+./run_sim.sh --waves
+./run_sim.sh --clean
+```
+
+Variáveis configuráveis:
+- `SIM`  — simulador (`iverilog` por padrão)
+- `BUILD_DIR` — diretório de saída (padrão `build`)
+- `RUN_TB` — nome do testbench a executar
 
 ## Integrantes
 
