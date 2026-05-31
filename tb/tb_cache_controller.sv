@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module tb_cache_top();
+module tb_cache_controller();
 
     logic clk;
     logic reset;
@@ -133,11 +133,9 @@ module tb_cache_top();
         read_cache(8'h00, read_val, hit_status); // Preenche a Via 1
         read_cache(8'h40, read_val, hit_status); // Provoca conflito e expulsa o 0xD0 (Write-Back)
         
-        // Resetamos a cache completamente. O próximo acesso ao 0xD0 terá de ir buscar o valor na memória principal.
-        reset = 1; #20; reset = 0; #10;
-        
+        // Acesso ao 0xD0 agora será um MISS (pois foi expulso) e terá de buscar o valor na memória principal.
         read_cache(8'hD0, read_val, hit_status);
-        // O valor tem de ser B00B1E55 e tem de ser um MISS (pois a cache foi resetada).
+        // O valor tem de ser B00B1E55 e tem de ser um MISS.
         check_assert("Write-Back: Bloco dirty atualizou a memoria principal ANTES de ser substituido", read_val == 32'hB00B1E55 && hit_status == 0);
     endtask
     
@@ -217,7 +215,7 @@ module tb_cache_top();
     initial begin
         // Salva os arquivos 
         $dumpfile("tb_cache_waveforms.vcd");
-        $dumpvars(0, tb_cache_top);
+        $dumpvars(0, tb_cache_controller);
 
         // Zera tudo
         clk = 0; reset = 0; cpu_read = 0; cpu_write = 0; cpu_addr = 0; cpu_wdata = 0;

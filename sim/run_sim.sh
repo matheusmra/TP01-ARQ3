@@ -5,7 +5,7 @@ PROG=$(basename "$0")
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_DIR="${BUILD_DIR:-$ROOT_DIR/build}"
 SIM="${SIM:-iverilog}"
-TESTBENCH="tb_cache_top"
+TESTBENCH="tb_cache_controller"
 WAVES=false
 CLEAN=false
 RUN_ALL=false
@@ -14,7 +14,7 @@ usage() {
   cat <<EOF
 Usage: $PROG [options]
 Options:
-  --testbench <name>   Run a specific testbench from tb/ (default: tb_cache_top)
+  --testbench <name>   Run a specific testbench from tb/ (default: tb_cache_controller)
   --waves              Open GTKWave after simulation
   --run-all            Execute all testbenches sequentially
   --clean              Remove generated build artifacts
