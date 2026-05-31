@@ -33,17 +33,45 @@ Implementação de um **controlador de cache** em SystemVerilog, baseado na Seç
 
 ## Como Compilar e Simular (Linux)
 
-> **TODO**: Instruções detalhadas serão adicionadas após a configuração dos scripts de simulação.
+Dependências mínimas:
+- GNU Make
+- Verilog simulator compatível com `iverilog` ou `xsim`
+- GTKWave (opcional, para abrir waveforms)
+
+No Linux, use os scripts em `sim/`:
 
 ```bash
 # Clone o repositório
 git clone https://github.com/matheusmra/TP01-ARQ3.git
 cd TP01-ARQ3
 
-# Execute a simulação
+# Compilar todos os módulos RTL e testbenches
 cd sim
+make compile
+
+# Executar a simulação principal
 make run
+
+# Executar todos os testbenches sequencialmente
+make run_all
+
+# Limpar os artefatos gerados
+make clean
 ```
+
+Também é possível usar o script auxiliar:
+
+```bash
+./run_sim.sh --testbench tb_cache_top
+./run_sim.sh --run-all
+./run_sim.sh --waves
+./run_sim.sh --clean
+```
+
+Variáveis configuráveis:
+- `SIM`  — simulador (`iverilog` por padrão)
+- `BUILD_DIR` — diretório de saída (padrão `build`)
+- `RUN_TB` — nome do testbench a executar
 
 ## Integrantes
 
