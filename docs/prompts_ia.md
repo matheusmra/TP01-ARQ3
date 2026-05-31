@@ -327,3 +327,20 @@ A IA forneceu a estrutura completa do arquivo de teste em SystemVerilog, impleme
 A IA higienizou o arquivo substituindo os comentários redundantes por documentações orientadas à intenção do projeto. As modificações incluíram:
 - Detalhamento semântico nas tasks de substituição, explicando de forma teórica como a lotação das duas vias do Índice 0 seguida de uma escrita transforma a Via 0 em um bloco "sujo" (dirty) e candidato preferencial à expulsão.
 - Padronização das strings de exibição do comando `check_assert`, permitindo que o log impresso em tempo de execução no console funcione como uma especificação viva e legível do correto comportamento do hardware.
+
+---
+
+## Prompt 14 — Revisão Final e Formatação da Documentação
+
+**Objetivo:** Revisar os textos finais do README.md e do relatório já elaborados pelo grupo, garantindo a padronização tipográfica e a correta organização das seções antes da exportação para PDF.
+
+### Prompt
+
+Solicitação de revisão da formatação da versão final do "README.md" e do rascunho do relatório acadêmico ("docs/relatorio.md") previamente redigidos pelo grupo. O pedido estipula a padronização de nomes de arquivos e estados da FSM.
+
+### Resposta
+
+A IA analisou os documentos fornecidos pelo grupo e realizou pequenos ajustes de formatação e revisão:
+- Revisão Estrutural: Validou a organização que o grupo fez no README.md, confirmando que as instruções de simulação e a lista de integrantes estavam claras.
+- Ajustes Tipográficos: Aplicou correções pontuais no texto do relatório para manter o padrão visual exigido.
+ 
